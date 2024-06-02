@@ -65,7 +65,7 @@ jobs:
       - name: Deploy site
         uses: ./.github/actions/deploy-s3
         with:
-          bucket: ${{ secrets.S3_BUCKET }}
+          bucket: 'github-actions-blackbanana'
           dist-folder: ./dist
           bucket-region: 'ap-southeast-1'
         env:
