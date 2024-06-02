@@ -9,13 +9,10 @@ jobs:
     steps:
       - name: Get code
         uses: actions/checkout@v3
-      - name: Load & cache dependencies
-        id: cache-deps
-        uses: ./.github/actions/cached-deps
+      - name: Load and cache deps
+        uses: ./.github/actions/cache-deps
         with:
           caching: 'false'
-      - name: Output information
-        run: echo "Cache used? ${{ steps.cache-deps.outputs.used-cache }}"
       - name: Lint code
         run: npm run lint
   test:
@@ -23,9 +20,9 @@ jobs:
     steps:
       - name: Get code
         uses: actions/checkout@v3
-      - name: Load & cache dependencies
-        uses: ./.github/actions/cached-deps
-      - name: Test code
+      - name: Load and cache deps
+        uses: ./.github/actions/cache-deps
+      - name: Run tests
         id: run-tests
         run: npm run test
       - name: Upload test report
@@ -40,8 +37,11 @@ jobs:
     steps:
       - name: Get code
         uses: actions/checkout@v3
-      - name: Load & cache dependencies
-        uses: ./.github/actions/cached-deps
+      - name: Load and cache deps
+        id: install
+        uses: ./.github/actions/cache-deps
+      - name: Output information
+        run: echo "Output of job is ${{ steps.install.outputs.used-cache }}"
       - name: Build website
         run: npm run build
       - name: Upload artifacts
@@ -64,14 +64,14 @@ jobs:
         run: ls
       - name: Deploy site
         id: deploy
-        uses: ./.github/actions/deploy-s3-javascript
+        uses: ./.github/actions/deploy-s3
+        with:
+          bucket: 'github-actions-blackbanana'
+          dist-folder: ./dist
+          bucket-region: 'ap-southeast-1'
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        with:
-          bucket: gha-custom-action-hosting
-          dist-folder: ./dist
-          # bucket-region: us-east-2
       - name: Output information
         run: |
-          echo "Live URL: ${{ steps.deploy.outputs.website-url }}"
+          echo "Live Url: ${{ steps.deploy.outputs.website-url }}"
