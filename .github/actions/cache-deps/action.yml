@@ -3,8 +3,8 @@ description: 'Get and cache dependencies in the project to speed the installatio
 inputs:
   caching:
     description: 'Whether to cache dependencies or not'
-  required: false
-  default: 'true'
+    required: false
+    default: 'true'
 runs:
   using: 'composite'
   steps:
