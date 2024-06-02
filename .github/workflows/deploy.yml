@@ -37,15 +37,11 @@ jobs:
     steps:
       - name: Get code
         uses: actions/checkout@v3
-      - name: Cache dependencies
-        id: cache
-        uses: actions/cache@v3
-        with:
-          path: node_modules
-          key: deps-node-modules-${{ hashFiles('**/package-lock.json') }}
-      - name: Install dependencies
-        if: steps.cache.outputs.cache-hit != 'true'
-        run: npm ci
+      - name: Load and cache deps
+        id: install
+        uses: ./.github/actions/cache-deps
+      - name: Output information
+        run: echo "Output of job is ${{ steps.install.outputs.used-cache }}"
       - name: Build website
         run: npm run build
       - name: Upload artifacts
